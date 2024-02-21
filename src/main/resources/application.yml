@@ -1,0 +1,62 @@
+KEYCLOAK_HOST: http://localhost:8080
+REALM: testrealm
+CLIENT_ID: photo-project
+CLIENT_SECRET: vzkqYAMnBzyWbj5brfNE27K0JFadZea6
+ADMIN_NAME: testrealmadmin
+ADMIN_PASSWORD: testrealmadmin
+REDIRECT_URI: "http://localhost:8080/login/oauth2/code/photo-project"
+REFRESH_TOKEN_URI: ${KEYCLOAK_HOST}/realms/${REALM}/protocol/openid-connect/token
+
+server:
+  port: 8000
+
+spring:
+  profiles:
+    active: dev
+  application:
+    name: photo-project
+  cache:
+    redis:
+      time-to-live: 900
+      key-prefix: pp
+    cache-names: serverplandtos, serverplandetaildto
+  #    type: redis
+  redis:
+    host: localhost
+    port: 6379
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/photoprojectdb
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database: postgresql
+    generate-ddl: true
+  security:
+    oauth2:
+      client:
+#        registration:
+#          photo-project:
+#            provider: keycloak
+#            client-id: ${CLIENT_ID}
+#            client-secret: ${CLIENT_SECRET}
+#            scope:
+#              - openid
+#              - user_attributes
+#            authorization-grant-type: authorization_code
+#            redirect-uri: ${REDIRECT_URI}
+#
+#        provider:
+#          keycloak:
+#            token-uri: ${KEYCLOAK_HOST}/auth/realms/${REALM}/protocol/openid-connect/token
+#            authorization-uri: ${KEYCLOAK_HOST}/auth/realms/${REALM}/protocol/openid-connect/auth
+#            user-info-uri: ${KEYCLOAK_HOST}/auth/realms/${REALM}/protocol/openid-connect/userinfo
+#            jwk-set-uri: ${KEYCLOAK_HOST}/auth/realms/${REALM}/protocol/openid-connect/certs
+#            user-name-attribute: preferred_username
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_HOST}/realms/${REALM}
+          jwk-set-uri: ${KEYCLOAK_HOST}/realms/${REALM}/protocol/openid-connect/certs
