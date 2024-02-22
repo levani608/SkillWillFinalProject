@@ -1,9 +1,9 @@
 package com.study.projects.newphotoproject.model.dto;
 
-import com.study.projects.newphotoproject.model.domain.database.ServerPlanEntity;
-import lombok.*;
-import org.springframework.data.redis.core.RedisHash;
-import org.springframework.data.redis.core.index.Indexed;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.Serializable;
 
@@ -11,7 +11,6 @@ import java.io.Serializable;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-//@RedisHash
 public class ServerPlanDto implements Serializable {
 
     protected String serverPlanName;

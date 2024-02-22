@@ -13,12 +13,16 @@ import java.util.Optional;
 public interface UserServerRepository extends JpaRepository<UserServerEntity, Long> {
 
     @Query("""
-        select us from user_servers us inner join albums a on us.userServerId = a.serverEntity.userServerId where
+        select us from UserServerEntity us inner join albums a on us.userServerId = a.serverEntity.userServerId where
         a.albumId = :albumId
 """)
     Optional<UserServerEntity> findByAlbumId(Long albumId);
 
-    List<UserServerEntity> findAllByServerUserEntityUserId(Long userId);
+    @Query("""
+        select us from UserServerEntity us
+        where us.serverUserEntity.id =:userId
+""")
+    List<UserServerEntity> findAllByServerUserEntityId(Long userId);
 
     List<UserServerEntity> findAllByServerUserEntity(UserEntity user);
 

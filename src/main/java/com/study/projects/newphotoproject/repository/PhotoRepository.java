@@ -14,7 +14,6 @@ import java.util.Optional;
 @Repository
 public interface PhotoRepository extends JpaRepository<PhotoEntity, Long> {
 
-    Optional<PhotoEntity> findById(Long id);
 
     List<PhotoEntity> findAllByPhotoAlbumEntityServerEntityServerUserEntity(UserEntity user);
 

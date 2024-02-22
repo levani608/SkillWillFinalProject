@@ -12,7 +12,7 @@ import java.util.Set;
 @Getter
 @Setter
 @RequiredArgsConstructor
-@Entity(name = "albums")
+@Entity()
 @Table//(uniqueConstraints = {@UniqueConstraint(columnNames = {"album_name", "server_id"})})
 public class AlbumEntity extends TableDates{
 

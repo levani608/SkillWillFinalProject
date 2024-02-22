@@ -49,8 +49,7 @@ public class UserEntity extends TableDates {
     @OneToMany(mappedBy = "toUserEntity")
     private Set<ShareRightsEntity> toUsers;
 
-    @OneToMany(mappedBy = "walletOwnerEntity")
-    private Set<UserWalletEntity> userWallets;
+    private Double balance;
 
 
 }

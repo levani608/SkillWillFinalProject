@@ -1,6 +1,5 @@
 package com.study.projects.newphotoproject.repository;
 
-import com.study.projects.newphotoproject.model.domain.database.AlbumEntity;
 import com.study.projects.newphotoproject.model.domain.database.ShareRightsEntity;
 import com.study.projects.newphotoproject.model.domain.database.UserEntity;
 import org.springframework.data.domain.Page;
@@ -14,8 +13,8 @@ import java.util.List;
 @Repository
 public interface SharingRepository extends JpaRepository<ShareRightsEntity, Long> {
 
-        List<ShareRightsEntity> findAllByFromUserEntityUserId(Long userId);
-        List<ShareRightsEntity> findAllByFromUserEntityUserIdAndToUserEntityUserIdAndSharedAlbumEntityAlbumId(Long userId, Long toUserId, Long sharedAlbumId);
+        List<ShareRightsEntity> findAllByFromUserEntityId(Long userId);
+        List<ShareRightsEntity> findAllByFromUserEntityIdAndToUserEntityIdAndSharedAlbumEntityAlbumId(Long userId, Long toUserId, Long sharedAlbumId);
         List<ShareRightsEntity> findAllByToUserEntity(UserEntity userEntity);
 
         @Query("select s from share_rights s where s.sharedAlbumEntity.albumId = :albumId and s.toUserEntity.id = :userId")

@@ -22,6 +22,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -32,18 +33,19 @@ public class AlbumFacade {
     private final UserService userService;
     private final UserValidator userValidator;
     private final SharingService sharingService;
-    private final AuthService authService;
+
 
     @Transactional
     public List<AlbumDto> getAlbums(Long userServerId) {
 
-        Long principalId = authService.getPrincipalDatabaseId();
+        Long principalId = AuthService.getPrincipalDatabaseId();
 
-        UserServerEntity userServer = userServerService.getUserServer(userServerId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Server not found!"));
+        UserServerEntity userServer = userServerService.getUserServer(userServerId)
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Server not found!"));
 
         if (userServer.getUserServerStatus()== UserServerStatus.USERDEACTIVATED)
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "User deactivated!");
-        else if (userValidator.checkIfAdmin() || userServer.getServerUserEntity().getId() == principalId) {
+        else if (userValidator.checkIfAdmin() || Objects.equals(userServer.getServerUserEntity().getId(), principalId)) {
             List<AlbumEntity> allAlbums = albumService.getAlbums(userServerId).stream()
                     .filter(a-> a.getAlbumStatus()== AlbumStatus.ACTIVE).toList();
 
@@ -55,12 +57,12 @@ public class AlbumFacade {
 
     public AlbumDto addAlbum(Long userServerId, AddAlbumParam addAlbumParam) {
 
-        Long principalId = authService.getPrincipalDatabaseId();
+        Long principalId = AuthService.getPrincipalDatabaseId();
 
         UserServerEntity userServer = userServerService.getUserServer(userServerId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Server not found!"));
         if (userServer.getServerUserEntity().getUserStatus()== UserStatus.DEACTIVATED)
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User deactivated!");
-        else if (userValidator.checkIfAdmin() || userServer.getServerUserEntity().getId() == principalId) {
+        else if (userValidator.checkIfAdmin() || Objects.equals(userServer.getServerUserEntity().getId(), principalId)) {
 
             List<AlbumEntity> sameNameAlbums = userServer.getAlbums().stream()
                     .filter(a-> a.getAlbumName().equals(addAlbumParam.getAlbumName()) && a.getAlbumStatus()== AlbumStatus.ACTIVE).toList();
@@ -82,21 +84,19 @@ public class AlbumFacade {
     @Transactional
     public AlbumDto deleteAlbum(Long albumId) {
 
-        Long principalId = authService.getPrincipalDatabaseId();
+        Long principalId = AuthService.getPrincipalDatabaseId();
 
         AlbumEntity album = albumService.findAlbumById(albumId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Album not found!"));
 
         if (album.getServerEntity().getServerUserEntity().getUserStatus()== UserStatus.DEACTIVATED)
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "User deactivated!");
-        else if (userValidator.checkIfAdmin() || album.getServerEntity().getServerUserEntity().getId() == principalId) {
+        else if (userValidator.checkIfAdmin() || Objects.equals(album.getServerEntity().getServerUserEntity().getId(), principalId)) {
 
             if (album.getAlbumStatus()== AlbumStatus.DELETED)
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "Album already deleted!");
 
             album.setAlbumStatus(AlbumStatus.DELETED);
             albumService.saveAlbum(album);
-
-            //photoService.deleteAlbumPhotos(album);
 
             return AlbumMapper.toAlbumDto(album);
         }
@@ -111,10 +111,9 @@ public class AlbumFacade {
         if (user.getUserStatus() == UserStatus.DEACTIVATED)
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "User deactivated!");
 
-        List<AlbumEntity> allAlbums = albumService.getAlbumsByUser(user, pageable).stream()
-                .filter(a-> a.getAlbumStatus()== AlbumStatus.ACTIVE).toList();
 
-        return allAlbums.stream().map(AlbumMapper::toAlbumDto).toList();
+
+        return albumService.getAlbumsByUser(user.getId(), pageable).map(AlbumMapper::toAlbumDto).toList();
     }
 
     @Transactional

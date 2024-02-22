@@ -8,7 +8,7 @@ import lombok.Setter;
 
 import java.util.Set;
 
-@Entity(name = "user_servers")
+@Entity
 @Getter
 @Setter
 @RequiredArgsConstructor
@@ -38,17 +38,14 @@ public class UserServerEntity extends TableDates {
     @Enumerated(EnumType.STRING)
     private UserServerStatus userServerStatus;
 
-    @OneToOne(mappedBy = "userServerEntity")
-    private InvoiceEntity invoice;
-
     @OneToMany(mappedBy = "serverEntity")
     private Set<AlbumEntity> albums;
 
-    public UserServerEntity(String name, UserEntity owner, ServerPlanEntity serverPlan, Double usedCapacity) {
+    public UserServerEntity(String name, UserEntity owner, ServerPlanEntity serverPlan) {
         this.userServerName = name;
         this.serverUserEntity = owner;
         this.serverPlanEntity = serverPlan;
-        this.usedCapacity = usedCapacity;
+        this.usedCapacity = 0.0;
         this.userServerStatus = UserServerStatus.ACTIVE;
     }
 

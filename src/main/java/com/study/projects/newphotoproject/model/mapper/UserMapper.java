@@ -8,7 +8,7 @@ public class UserMapper {
 
     public static UserDetailDto toUserDetailDto(UserEntity userEntity) {
         return new UserDetailDto(userEntity.getId(), userEntity.getUsername(), userEntity.getFirstName(),
-                userEntity.getLastName(), userEntity.getEmail(), userEntity.getUserStatus());
+                userEntity.getLastName(), userEntity.getEmail(), userEntity.getUserStatus(),userEntity.getBalance());
     }
 
 }

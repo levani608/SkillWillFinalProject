@@ -32,8 +32,8 @@ public class ServerPlanEntity extends TableDates {
     @Enumerated(EnumType.STRING)
     private ServerPlanStatus serverPlanStatus;
 
-    @OneToOne(mappedBy = "serverPlanEntity")
-    private StockEntity stock;
+    @Column(name = "quantity", nullable = false)
+    private Integer quantity;
 
     @OneToMany(mappedBy = "serverPlanEntity")
     private Set<UserServerEntity> userServers;

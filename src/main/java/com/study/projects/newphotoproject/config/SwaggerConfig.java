@@ -16,9 +16,7 @@ public class SwaggerConfig {
       return new OpenAPI()
               .components(new Components()
                       .addSecuritySchemes("bearer-token",
-                              new SecurityScheme().type(SecurityScheme.Type.HTTP)
-                                      .scheme("bearer")
-                                      .bearerFormat("JWT")));
+                              new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")));
    }
 
 }

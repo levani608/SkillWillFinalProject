@@ -4,7 +4,6 @@ import com.study.projects.newphotoproject.facade.SharingFacade;
 import com.study.projects.newphotoproject.model.dto.ShareRightsDto;
 import com.study.projects.newphotoproject.model.param.AddShareParam;
 import com.study.projects.newphotoproject.model.param.ModifyShareParam;
-import com.study.projects.newphotoproject.model.param.RemoveShareParam;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/photo-project/{userId}/shares")
+@RequestMapping("/{userId}/shares")
 @RequiredArgsConstructor
 public class SharingController {
 
@@ -36,10 +35,10 @@ public class SharingController {
         return new ResponseEntity<>(sharingFacade.addSharing(userId, addShareParam), HttpStatus.CREATED);
     }
 
-    @PatchMapping("/modify-sharing")
+    @PutMapping("/modify-sharing")
     @PreAuthorize("hasRole('ADMIN') or @UserValidator.checkOwnership(#userId)")
     @Operation(security = @SecurityRequirement(name = "bearer-token"))
-    public ResponseEntity<ShareRightsDto> modifySharingRight(@PathVariable Long userId, @RequestParam("share_id") Long shareId, @RequestBody ModifyShareParam modifyShareParam) {
+    public ResponseEntity<ShareRightsDto> modifySharingRight(@PathVariable Long userId, @RequestParam("shareId") Long shareId, @RequestBody ModifyShareParam modifyShareParam) {
         return new ResponseEntity<>(sharingFacade.modifySharingRight(userId, shareId, modifyShareParam), HttpStatus.OK);
     }
 

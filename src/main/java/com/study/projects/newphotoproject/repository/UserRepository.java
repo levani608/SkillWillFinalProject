@@ -17,7 +17,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
 
     Optional<UserEntity> findUserByUsername(String username);
-    Optional<UserEntity> findByUserId(Long id);
+    
 
     @Query(value ="""
                   select u from UserEntity u 

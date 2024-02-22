@@ -12,7 +12,7 @@ public class ServerPlanMapper {
 
     public static ServerPlanDetailDto toServerPlanDetailDto(ServerPlanEntity serverPlanEntity) {
         return new ServerPlanDetailDto(serverPlanEntity.getServerPlanId(), serverPlanEntity.getServerPlanName(), serverPlanEntity.getServerPlanCapacity(),
-                serverPlanEntity.getStock().getQuantity(), serverPlanEntity.getPrice(), serverPlanEntity.getServerPlanStatus());
+                serverPlanEntity.getQuantity(), serverPlanEntity.getPrice(), serverPlanEntity.getServerPlanStatus());
     }
 
 }

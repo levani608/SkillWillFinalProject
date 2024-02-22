@@ -1,16 +1,13 @@
 package com.study.projects.newphotoproject.service;
 
 import com.study.projects.newphotoproject.model.domain.database.AlbumEntity;
-import com.study.projects.newphotoproject.model.domain.database.UserEntity;
-import com.study.projects.newphotoproject.model.enums.AlbumStatus;
 import com.study.projects.newphotoproject.repository.AlbumRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,7 +34,7 @@ public class AlbumService {
 
 
     @Transactional
-    public List<AlbumEntity> getAlbumsByUser(UserEntity user, Pageable pageable) {
-        return albumRepository.findAllByServerEntityServerUserEntity(user, pageable);
+    public Page<AlbumEntity> getAlbumsByUser(Long userId, Pageable pageable) {
+        return albumRepository.findAllByServerEntityServerUserEntity(userId, pageable);
     }
 }

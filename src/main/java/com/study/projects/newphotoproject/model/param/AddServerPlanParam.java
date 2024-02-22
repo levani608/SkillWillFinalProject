@@ -8,7 +8,7 @@ public class AddServerPlanParam {
     private String serverPlanName;
 
     private Double maxCapacity;
-
+    private Integer quantity;
     private Double price;
 
 }

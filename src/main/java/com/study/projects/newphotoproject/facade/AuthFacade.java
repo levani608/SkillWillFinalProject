@@ -3,6 +3,7 @@ package com.study.projects.newphotoproject.facade;
 import com.study.projects.newphotoproject.model.domain.database.UserEntity;
 import com.study.projects.newphotoproject.model.dto.ResponseTokensDto;
 import com.study.projects.newphotoproject.model.dto.UserDetailDto;
+import com.study.projects.newphotoproject.model.enums.UserRole;
 import com.study.projects.newphotoproject.model.enums.UserStatus;
 import com.study.projects.newphotoproject.model.mapper.ResponseTokensMapper;
 import com.study.projects.newphotoproject.model.mapper.UserMapper;
@@ -32,7 +33,7 @@ public class AuthFacade {
 
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
-    public static final String secret="19239129319ASDASAS";
+    public static final String secret="19239129319ASDASASasdasdasda11ff";
 
     public UserDetailDto singUp(SignUpParam signUpParam) {
 
@@ -41,6 +42,8 @@ public class AuthFacade {
         user.setFirstName(signUpParam.getFirstName());
         user.setLastName(signUpParam.getLastName());
         user.setEmail(signUpParam.getEmail());
+        user.setBalance(0.0);
+        user.setRole(UserRole.ROLE_USER);
         user.setPassword(passwordEncoder.encode(signUpParam.getPassword()));
         user.setUserStatus(UserStatus.ACTIVE);
         user = userService.saveUserInDatabase(user);
@@ -52,7 +55,7 @@ public class AuthFacade {
         UserEntity user = userService.findByUserName(loginParam.getUsername());
         boolean matches = passwordEncoder.matches(loginParam.getPassword(), user.getPassword());
         if (!matches) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Username or password is invalid!;");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User or password is incorrect;");
         }
         String token = Jwts.builder()
                 .claim("username", user.getUsername())

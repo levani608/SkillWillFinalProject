@@ -2,6 +2,7 @@ package com.study.projects.newphotoproject.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.springframework.http.HttpStatusCode;
 
 import java.time.LocalDateTime;
 
@@ -9,7 +10,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ExceptionBody {
 
-    private String status;
+    private HttpStatusCode status;
 
     private String message;
 

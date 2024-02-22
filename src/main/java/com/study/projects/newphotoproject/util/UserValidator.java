@@ -11,10 +11,9 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class UserValidator {
 
-    private final AuthService authService;
 
     public boolean checkOwnership(Long userId) {
-        return userId == authService.getPrincipalDatabaseId();
+        return userId == AuthService.getPrincipalDatabaseId();
     }
 
 

@@ -4,7 +4,6 @@ import com.study.projects.newphotoproject.model.enums.PaymentMethodStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import javax.persistence.*;
 
 @Data
 @AllArgsConstructor
@@ -16,7 +15,6 @@ public class PaymentMethodDto {
 
     private Double rate;
 
-    @Enumerated(EnumType.STRING)
     private PaymentMethodStatus paymentMethodStatus;
 
 }

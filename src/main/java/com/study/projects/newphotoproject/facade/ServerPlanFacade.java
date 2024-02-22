@@ -1,23 +1,26 @@
 package com.study.projects.newphotoproject.facade;
 
 import com.study.projects.newphotoproject.model.domain.database.ServerPlanEntity;
-import com.study.projects.newphotoproject.model.domain.database.StockEntity;
-import com.study.projects.newphotoproject.model.domain.database.StockHistoryEntity;
+import com.study.projects.newphotoproject.model.domain.database.UserEntity;
+import com.study.projects.newphotoproject.model.domain.database.UserServerEntity;
 import com.study.projects.newphotoproject.model.dto.ServerPlanDetailDto;
+import com.study.projects.newphotoproject.model.dto.UserServerDto;
 import com.study.projects.newphotoproject.model.enums.ServerPlanStatus;
+import com.study.projects.newphotoproject.model.enums.UserStatus;
 import com.study.projects.newphotoproject.model.mapper.ServerPlanMapper;
+import com.study.projects.newphotoproject.model.mapper.UserServerMapper;
 import com.study.projects.newphotoproject.model.param.AddServerPlanParam;
 import com.study.projects.newphotoproject.model.param.ModifyServerPlanParam;
+import com.study.projects.newphotoproject.model.param.PlanBuyParam;
 import com.study.projects.newphotoproject.repository.ServerPlanRepository;
 import com.study.projects.newphotoproject.service.ServerPlanService;
-import com.study.projects.newphotoproject.service.StockHistoryService;
-import com.study.projects.newphotoproject.service.StockService;
+import com.study.projects.newphotoproject.service.UserServerService;
+import com.study.projects.newphotoproject.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -27,11 +30,10 @@ import java.util.List;
 public class ServerPlanFacade {
 
     private final ServerPlanService serverPlanService;
-    private final StockService stockService;
-    private final StockHistoryService stockHistoryService;
     private final BeanFactory beanFactory;
     private final ServerPlanRepository serverPlanRepository;
-
+    private final UserService userService;
+    private final UserServerService userServerService;
     public static final String ALL = "all";
 
     public List<ServerPlanDetailDto> getAllServerPlans() {
@@ -58,27 +60,17 @@ public class ServerPlanFacade {
     public ServerPlanDetailDto addServerPlan(AddServerPlanParam addServerPlanParam) {
 
         ServerPlanEntity serverPlan = new ServerPlanEntity();
-        StockEntity stock = new StockEntity();
-        StockHistoryEntity stockHistory = new StockHistoryEntity();
+
 
         serverPlan.setServerPlanName(addServerPlanParam.getServerPlanName());
         serverPlan.setServerPlanCapacity(addServerPlanParam.getMaxCapacity());
         serverPlan.setPrice(addServerPlanParam.getPrice());
+        serverPlan.setQuantity(addServerPlanParam.getQuantity());
         serverPlan.setServerPlanStatus(ServerPlanStatus.VALID);
+
         serverPlanService.saveServerPlan(serverPlan);
 
-        stock.setServerPlanEntity(serverPlan);
-        stock.setQuantity(0);
-        stockService.saveStock(stock);
-
-        stockHistory.setStockEntity(stock);
-        stockHistory.setDelta(0);
-        stockHistoryService.saveStockHistory(stockHistory);
-        serverPlan.setStock(stock);
-
-        ServerPlanDetailDto serverPlanDetailDto = ServerPlanMapper.toServerPlanDetailDto(serverPlan);
-
-        return serverPlanDetailDto;
+        return ServerPlanMapper.toServerPlanDetailDto(serverPlan);
     }
 
 
@@ -89,6 +81,7 @@ public class ServerPlanFacade {
 
         serverPlan.setServerPlanName(modifyServerPlanParam.getServerPlanName());
         serverPlan.setPrice(modifyServerPlanParam.getPrice());
+        serverPlan.setQuantity(modifyServerPlanParam.getQuantity());
         serverPlanService.saveServerPlan(serverPlan);
 
         ServerPlanDetailDto serverPlanDetailDto = ServerPlanMapper.toServerPlanDetailDto(serverPlan);
@@ -96,12 +89,7 @@ public class ServerPlanFacade {
         return serverPlanDetailDto;
     }
 
-    @Caching(evict = {
-            @CacheEvict(value= "serverplandetaildto", key = "#root.target.ALL"),
-            @CacheEvict(value= "serverplandetaildto", key = "#result.serverPlanId"),
-            @CacheEvict(value = "serverplandtos", allEntries = true)
 
-    })
     public ServerPlanDetailDto invalidateServerPlan(Long serverPlanId) {
 
         ServerPlanEntity serverPlan = serverPlanService.findServerPlanById(serverPlanId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Server plan not found"));;
@@ -126,7 +114,41 @@ public class ServerPlanFacade {
 
         return serverPlanDetailDto;
     }
+    @Transactional
+    public UserServerDto buyPlan(Long userId, PlanBuyParam planBuyParam) {
 
+        UserEntity user = userService.findByUserId(userId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found!"));
+        if (user.getUserStatus() == UserStatus.DEACTIVATED) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User deactivated!");
+        }
+
+
+        ServerPlanEntity serverPlan = serverPlanService.findServerPlanById(planBuyParam.getServerPlanId()).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Server plan not found!"));
+        if (serverPlan.getServerPlanStatus()==ServerPlanStatus.INVALID) {
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Server plan invalid!");
+        }
+
+
+        double serverPlanPrice = serverPlan.getPrice();
+
+
+        if (serverPlan.getQuantity() < 1) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough items in stock!");
+        }
+        else if (user.getBalance() < serverPlanPrice) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough funds on the wallet!");
+        }
+
+        user.setBalance(user.getBalance()-serverPlanPrice);
+        serverPlan.setQuantity(serverPlan.getQuantity()-1);
+
+
+        UserServerEntity userServerEntity = userServerService.saveUserServer(new UserServerEntity(planBuyParam.getUserServerName(), user, serverPlan));
+
+        serverPlanService.saveServerPlan(serverPlan);
+        userService.saveUser(user);
+        return UserServerMapper.toUserServerDto(userServerEntity);
+    }
 
 
 }

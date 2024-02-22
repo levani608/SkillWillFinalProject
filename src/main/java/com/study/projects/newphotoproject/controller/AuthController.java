@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping("/api/photo-project/auth")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
 

@@ -7,7 +7,7 @@ import com.study.projects.newphotoproject.model.dto.PhotoDto;
 public class PhotoMapper {
 
     public static PhotoDto toPhotoDto(PhotoEntity photoEntity) {
-        return new PhotoDto(photoEntity.getPhotoName(), photoEntity.getPhotoUri());
+        return new PhotoDto(photoEntity.getPhotoId(),photoEntity.getPhotoName(), photoEntity.getPhotoUri());
     }
 
     public static PhotoDetailDto toPhotoDetailDto(PhotoEntity photoEntity) {

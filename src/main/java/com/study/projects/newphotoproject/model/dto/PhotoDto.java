@@ -11,6 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class PhotoDto {
 
+    protected Long photoId;
     protected String photoName;
 
     protected String photoUri;

@@ -6,7 +6,9 @@ import com.study.projects.newphotoproject.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
@@ -27,7 +29,7 @@ public class UserService {
 
 
     public UserEntity findByUserName(String username) {
-        return userRepository.findUserByUsername(username).orElse(null);
+        return userRepository.findUserByUsername(username).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"User or password is incorrect;"));
     }
 
     public List<UserEntity> findAllUsers() {
@@ -35,7 +37,7 @@ public class UserService {
     }
 
     public Optional<UserEntity> findByUserId(Long userId) {
-        return userRepository.findByUserId(userId);
+        return userRepository.findById(userId);
     }
 
     public UserEntity saveUser(UserEntity user) {

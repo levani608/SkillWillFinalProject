@@ -29,12 +29,11 @@ public class PhotoFacade {
     private final UserService userService;
     private final SharingService sharingService;
     private final UserServerService userServerService;
-    private final AuthService authService;
 
     private final UserValidator userValidator;
 
     private void isPrincipalActivated() {
-        Long principalId = authService.getPrincipalDatabaseId();
+        Long principalId = AuthService.getPrincipalDatabaseId();
 
         UserEntity principal = userService.findByUserId(principalId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found!"));
         if (principal.getUserStatus() == UserStatus.DEACTIVATED)
@@ -44,7 +43,7 @@ public class PhotoFacade {
     @Transactional
     public List<PhotoDto> getAllPhotos(Long albumId, Pageable pageable) {
 
-        Long principalId = authService.getPrincipalDatabaseId();
+        Long principalId = AuthService.getPrincipalDatabaseId();
 
         isPrincipalActivated();
 
@@ -59,7 +58,6 @@ public class PhotoFacade {
             else if (album.getAlbumStatus() == AlbumStatus.DELETED)
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Album deleted!");
             else return photoService.getPhotosByAlbumId(albumId, pageable).stream().filter(p-> p.getPhotoStatus() == PhotoStatus.ACTIVE).map(PhotoMapper::toPhotoDto).toList();
-            //return album.getPhotos().stream().filter(p-> p.getPhotoStatus() == PhotoStatus.ACTIVE).map(PhotoMapper::toPhotoDto).toList();
 
         }
         else throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You don't have permission to access " + album.getAlbumName() + "!");
@@ -69,7 +67,7 @@ public class PhotoFacade {
     @Transactional
     public PhotoDetailDto getPhotoById(Long albumId, Long photoId) {
 
-        Long principalId = authService.getPrincipalDatabaseId();
+        Long principalId = AuthService.getPrincipalDatabaseId();
 
         isPrincipalActivated();
 
@@ -94,7 +92,7 @@ public class PhotoFacade {
     @Transactional
     public PhotoDetailDto addPhoto(Long albumId, AddPhotoParam addPhotoParam) {
 
-        Long principalId = authService.getPrincipalDatabaseId();
+        Long principalId = AuthService.getPrincipalDatabaseId();
 
         isPrincipalActivated();
 
@@ -150,7 +148,7 @@ public class PhotoFacade {
     @Transactional
     public PhotoDetailDto modifyPhoto(ModifyPhotoParam modifyPhotoParam) {
 
-        Long principalId = authService.getPrincipalDatabaseId();
+        Long principalId = AuthService.getPrincipalDatabaseId();
 
         isPrincipalActivated();
 
@@ -188,7 +186,7 @@ public class PhotoFacade {
     @Transactional
     public PhotoDetailDto copyPhoto(Long albumId,MoveCopyPhotoParam moveCopyPhotoParam) {
 
-        Long principalId = authService.getPrincipalDatabaseId();
+        Long principalId = AuthService.getPrincipalDatabaseId();
 
         isPrincipalActivated();
 
@@ -262,7 +260,7 @@ public class PhotoFacade {
     @Transactional
     public PhotoDetailDto movePhoto(Long albumId, MoveCopyPhotoParam moveCopyPhotoParam) {
 
-        Long principalId = authService.getPrincipalDatabaseId();
+        Long principalId = AuthService.getPrincipalDatabaseId();
 
         isPrincipalActivated();
 
@@ -335,9 +333,9 @@ public class PhotoFacade {
     }
 
     @Transactional
-    public PhotoDetailDto deletePhoto(Long photoId) {
+    public void deletePhoto(Long photoId) {
 
-        Long principalId = authService.getPrincipalDatabaseId();
+        Long principalId = AuthService.getPrincipalDatabaseId();
 
         isPrincipalActivated();
 
@@ -363,7 +361,6 @@ public class PhotoFacade {
             userServer.setUsedCapacity(userServer.getUsedCapacity()-photo.getPhotoSize());
             userServerService.saveUserServer(userServer);
 
-            return PhotoMapper.toPhotoDetailDto(photo);
 
         }
         else throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You don't have permission to access " + album.getAlbumName() + "!");

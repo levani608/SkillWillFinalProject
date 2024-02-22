@@ -5,11 +5,9 @@ import com.study.projects.newphotoproject.model.domain.database.UserServerEntity
 import com.study.projects.newphotoproject.model.enums.UserServerStatus;
 import com.study.projects.newphotoproject.repository.UserServerRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,7 +27,7 @@ public class UserServerService {
     }
 
     public List<UserServerEntity> getUserServersByUserId(Long userId) {
-        return userserverRepository.findAllByServerUserEntityUserId(userId);
+        return userserverRepository.findAllByServerUserEntityId(userId);
     }
 
     @Transactional

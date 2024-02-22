@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/photo-project/{albumId}/photos") //userId, sharedToUserId, admin
+@RequestMapping("/{albumId}/photos") //userId, sharedToUserId, admin
 @RequiredArgsConstructor
 public class PhotoController {
 
@@ -68,8 +68,9 @@ public class PhotoController {
 
     @DeleteMapping("/delete")
     @Operation(security = @SecurityRequirement(name = "bearer-token"))
-    public ResponseEntity<PhotoDetailDto> deletePhoto(/*@PathVariable Long albumId,*/ @RequestParam("photo_id") Long photoId) {
-        return new ResponseEntity<>(photoFacade.deletePhoto(photoId), HttpStatus.OK);
+    public ResponseEntity<Void> deletePhoto( @RequestParam("photo_id") Long photoId) {
+        photoFacade.deletePhoto(photoId);
+        return new ResponseEntity<>( HttpStatus.OK);
     }
 
 }

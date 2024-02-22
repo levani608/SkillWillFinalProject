@@ -21,7 +21,15 @@ public class SecurityConfig {
         @Qualifier("JwtBasedAuthenticationFilter") OncePerRequestFilter authenticationProcessingFilter) throws Exception {
         http
                 .addFilterBefore(authenticationProcessingFilter, UsernamePasswordAuthenticationFilter.class)
-                .authorizeHttpRequests(x->x.requestMatchers("/login","/register").permitAll().anyRequest().authenticated())
+                .authorizeHttpRequests(x->x.requestMatchers(
+                        "/login",
+                        "/register",
+                        "**",
+                        "/swagger-ui/**",
+                        "/v3/api-docs/**",
+                        "/v2/api-docs/**",
+                        "/webjars/**",
+                        "/swagger-resources/**").permitAll().anyRequest().authenticated())
                 .csrf(AbstractHttpConfigurer::disable);
         return http.build();
     }

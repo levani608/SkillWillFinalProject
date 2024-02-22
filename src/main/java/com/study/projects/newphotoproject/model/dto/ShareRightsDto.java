@@ -5,8 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import java.time.LocalDate;
 
 @Getter
@@ -20,7 +18,6 @@ public class ShareRightsDto {
 
     private String sharedAlbumName;
 
-    @Enumerated(EnumType.STRING)
     private ShareRightType shareRightType;
 
     private LocalDate shareDate;

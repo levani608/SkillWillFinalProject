@@ -6,6 +6,7 @@ import lombok.Data;
 public class ModifyServerPlanParam {
 
     private String serverPlanName;
+    private Integer quantity;
 
     private Double price;
 

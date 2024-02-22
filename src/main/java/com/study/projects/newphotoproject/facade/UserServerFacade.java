@@ -3,18 +3,15 @@ package com.study.projects.newphotoproject.facade;
 import com.study.projects.newphotoproject.model.domain.database.ServerPlanEntity;
 import com.study.projects.newphotoproject.model.domain.database.UserEntity;
 import com.study.projects.newphotoproject.model.domain.database.UserServerEntity;
-import com.study.projects.newphotoproject.model.dto.InvoiceDto;
 import com.study.projects.newphotoproject.model.dto.UserServerByPlanNameDto;
 import com.study.projects.newphotoproject.model.dto.UserServerDto;
 import com.study.projects.newphotoproject.model.enums.UserServerStatus;
 import com.study.projects.newphotoproject.model.enums.UserStatus;
-import com.study.projects.newphotoproject.model.mapper.InvoiceMapper;
 import com.study.projects.newphotoproject.model.mapper.UserServerMapper;
 import com.study.projects.newphotoproject.service.ServerPlanService;
 import com.study.projects.newphotoproject.service.UserServerService;
 import com.study.projects.newphotoproject.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -43,18 +40,6 @@ public class UserServerFacade {
                 .map(UserServerMapper::toUserServerDto).toList();
     }
 
-    public InvoiceDto getServerInvoice(Long userId, Long serverId) {
-
-        UserEntity user = userService.findByUserId(userId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found!"));
-        if (user.getUserStatus()== UserStatus.DEACTIVATED)
-            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "User deactivated!");
-
-        UserServerEntity userServer = userServerService.getUserServer(serverId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Server not found!"));
-        /*if (userServer.getServerUserEntity().getUserId() != userId)
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can't get invoice for this server!");*/
-
-        return InvoiceMapper.toInvoiceDto(userServer.getInvoice());
-    }
 
     public UserServerByPlanNameDto getUserServersByPlanName(Long userId, String serverPlanName) {
 

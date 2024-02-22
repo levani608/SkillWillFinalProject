@@ -1,6 +1,5 @@
 package com.study.projects.newphotoproject.service;
 
-import com.study.projects.newphotoproject.model.domain.database.AlbumEntity;
 import com.study.projects.newphotoproject.model.domain.database.ShareRightsEntity;
 import com.study.projects.newphotoproject.model.domain.database.UserEntity;
 import com.study.projects.newphotoproject.repository.SharingRepository;
@@ -10,7 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,11 +20,11 @@ public class SharingService {
 
 
     public List<ShareRightsEntity> findAllShareByUserId(Long userId) {
-        return sharingRepository.findAllByFromUserEntityUserId(userId);
+        return sharingRepository.findAllByFromUserEntityId(userId);
     }
 
     public List<ShareRightsEntity> findExistingShareRights(Long userId, Long toUserId, Long sharedAlbumId) {
-        return sharingRepository.findAllByFromUserEntityUserIdAndToUserEntityUserIdAndSharedAlbumEntityAlbumId(userId, toUserId, sharedAlbumId);
+        return sharingRepository.findAllByFromUserEntityIdAndToUserEntityIdAndSharedAlbumEntityAlbumId(userId, toUserId, sharedAlbumId);
     }
 
     @Transactional
